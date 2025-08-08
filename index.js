@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
 const port = process.env.PORT || 3000;
 const app = express()
@@ -29,8 +29,48 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
+      //dataBase collaction
+    const coffeeCollaction = client.db('coffee-store').collection('coffees')
 
 
+
+    //get mathored 
+    app.get('/coffees', async(req,res) => {
+        const result = await coffeeCollaction.find().toArray()
+        res.send(result)
+    })
+
+     
+
+
+    // get view dwtails button
+    app.get('/coffee/:id', async (req, res) => {
+        const id = req.params.id;
+        const query  = {_id: new ObjectId(id)}
+        const result = await coffeeCollaction.findOne(query )
+        res.send(result)
+    })
+
+
+
+
+    // get mathord chack email
+    app.get('/my-coffees/:email', async (req, res) => {
+        const email = req.params.email;
+        const query  = {email}
+        const result = await coffeeCollaction.find(query).toArray()
+        res.send(result)
+    })
+
+
+
+
+    //post mathored
+    app.post('/coffees', async(req,res) => {
+        const newCoffee = req.body
+        const result = await coffeeCollaction.insertOne(newCoffee)
+        res.send(result)
+    })
 
 
 
