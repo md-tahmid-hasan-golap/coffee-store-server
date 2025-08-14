@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config()
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express()
 const port = process.env.PORT || 3000
 
@@ -35,7 +35,7 @@ async function run() {
 
 
 
-      // coffees get mathord
+      // all coffees get mathord
       app.get('/coffees', async(req, res) => {
         const result = await coffeesCollaction.find().toArray()
         res.send(result)
@@ -47,8 +47,44 @@ async function run() {
         const result = await coffeesCollaction.find().limit(6).toArray()
         res.send(result)
       })
+     
+      // coffee details mathored
+       app.get('/coffees-details/:id', async(req, res) => {
+        const id = req.params.id
+        const queary = {_id: new ObjectId(id)}
+        const result = await coffeesCollaction.findOne(queary)
+        res.send(result)
+      })
+
+      // coffees delete mathored
+      app.delete('/coffees-delete/:id', async(req, res) => {
+        const id = req.params.id
+        const queary = {_id: new ObjectId(id)}
+        const result = await coffeesCollaction.deleteOne(queary)
+        res.send(result)     
+      })
+
+      // coffee update 
+      app.put('/coffee-updded/:id', async(req, res) => {
+        const id = req.params.id
+        const filter = {_id: new ObjectId(id)}
+        const options = {upsert: true}
+        const updateCoffee = req.body
+        const updateDoc = {
+            $set: updateCoffee
+        }
+        const result = await coffeesCollaction.updateOne(filter,updateDoc,options)
+         res.send(result)
+      })
 
 
+      //My added Coffee 
+      app.get('/myAddedCoffee/:email', async(req, res) =>{
+        const email = req.params.email
+        const queary = {email}
+        const result = await coffeesCollaction.find(queary).toArray()
+        res.send(result)
+      })
     // coffees post mathord
     app.post('/coffees', async(req, res) => {
         const newCoffee = req.body
