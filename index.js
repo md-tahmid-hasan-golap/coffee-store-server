@@ -35,6 +35,28 @@ async function run() {
 
 
 
+      // coffees get mathord
+      app.get('/coffees', async(req, res) => {
+        const result = await coffeesCollaction.find().toArray()
+        res.send(result)
+      })
+
+
+      // coffees limit(6)
+      app.get('/coffees-limit', async(req, res) => {
+        const result = await coffeesCollaction.find().limit(6).toArray()
+        res.send(result)
+      })
+
+
+    // coffees post mathord
+    app.post('/coffees', async(req, res) => {
+        const newCoffee = req.body
+        const result = await coffeesCollaction.insertOne(newCoffee)
+        res.send(result)
+    })
+
+
 
 
 
